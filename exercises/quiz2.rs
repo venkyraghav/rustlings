@@ -18,7 +18,7 @@
 // - The output element is going to be a Vector of strings.
 // No hints this time!
 
-// I AM NOT DONE
+// TODO I AM NOT DONE
 
 pub enum Command {
     Uppercase,
@@ -29,22 +29,51 @@ pub enum Command {
 mod my_module {
     use super::Command;
 
-    // TODO: Complete the function signature!
-    pub fn transformer(input: ???) -> ??? {
-        // TODO: Complete the output declaration!
-        let mut output: ??? = vec![];
+    pub fn transformer(input: Vec<(&str, Command)>) -> Vec<String> {
+        let mut output: Vec<String> = vec![];
+
         for (string, command) in input.iter() {
-            // TODO: Complete the function body. You can do it!
+            match command {
+                Command::Uppercase => output.push(string.clone().to_uppercase()),
+                Command::Trim => output.push(string.trim().to_string()),
+                Command::Append(size) => {
+                    let s1 = "bar".repeat(*size);
+                    let s2 = string.to_string() + s1.as_str();
+                    output.push(s2);
+                }
+            }
         }
         output
     }
+
+    /*
+    pub fn transformer_todo_returnstr(input: Vec<(&str, Command)>) -> Vec<&str> {
+        let mut output: Vec<&str> = vec![];
+
+        for (string, command) in input.iter() {
+            match command {
+                Command::Uppercase => {
+                    let s1 = string.to_uppercase();
+                    output.push(&s1);
+                }
+                Command::Trim => output.push(string.trim()),
+                Command::Append(size) => {
+                    let s1 = "bar".repeat(*size);
+                    let mut s2 = string.to_string();
+                    s2.push_str(s1.as_str());
+                    output.push(*string);
+                }
+            }
+        }
+        output
+    }
+     */
 }
 
 #[cfg(test)]
 mod tests {
-    // TODO: What do we have to import to have `transformer` in scope?
-    use ???;
     use super::Command;
+    use my_module::transformer;
 
     #[test]
     fn it_works() {
