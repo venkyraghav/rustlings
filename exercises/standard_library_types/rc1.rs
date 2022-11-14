@@ -5,32 +5,32 @@
 
 // Make this code compile by using the proper Rc primitives to express that the sun has multiple owners.
 
-// I AM NOT DONE
 use std::rc::Rc;
+use std::sync::Mutex;
 
 #[derive(Debug)]
 struct Sun {}
 
 #[derive(Debug)]
 enum Planet {
-    Mercury(Rc<Sun>),
-    Venus(Rc<Sun>),
-    Earth(Rc<Sun>),
-    Mars(Rc<Sun>),
-    Jupiter(Rc<Sun>),
-    Saturn(Rc<Sun>),
-    Uranus(Rc<Sun>),
-    Neptune(Rc<Sun>),
+    Mercury(Rc<Mutex<Sun>>),
+    Venus(Rc<Mutex<Sun>>),
+    Earth(Rc<Mutex<Sun>>),
+    Mars(Rc<Mutex<Sun>>),
+    Jupiter(Rc<Mutex<Sun>>),
+    Saturn(Rc<Mutex<Sun>>),
+    Uranus(Rc<Mutex<Sun>>),
+    Neptune(Rc<Mutex<Sun>>),
 }
 
 impl Planet {
     fn details(&self) {
-        println!("Hi from {:?}!", self)
+        println!("Hi from {:?}!", self);
     }
 }
 
 fn main() {
-    let sun = Rc::new(Sun {});
+    let sun = Rc::new(Mutex::new(Sun {}));
     println!("reference count = {}", Rc::strong_count(&sun)); // 1 reference
 
     let mercury = Planet::Mercury(Rc::clone(&sun));
@@ -54,17 +54,17 @@ fn main() {
     jupiter.details();
 
     // TODO
-    let saturn = Planet::Saturn(Rc::new(Sun {}));
+    let saturn = Planet::Saturn(Rc::clone(&sun));
     println!("reference count = {}", Rc::strong_count(&sun)); // 7 references
     saturn.details();
 
     // TODO
-    let uranus = Planet::Uranus(Rc::new(Sun {}));
+    let uranus = Planet::Uranus(Rc::clone(&sun));
     println!("reference count = {}", Rc::strong_count(&sun)); // 8 references
     uranus.details();
 
     // TODO
-    let neptune = Planet::Neptune(Rc::new(Sun {}));
+    let neptune = Planet::Neptune(Rc::clone(&sun));
     println!("reference count = {}", Rc::strong_count(&sun)); // 9 references
     neptune.details();
 
@@ -85,13 +85,16 @@ fn main() {
     drop(mars);
     println!("reference count = {}", Rc::strong_count(&sun)); // 4 references
 
+    drop(earth);
     // TODO
     println!("reference count = {}", Rc::strong_count(&sun)); // 3 references
 
     // TODO
+    drop(venus);
     println!("reference count = {}", Rc::strong_count(&sun)); // 2 references
 
     // TODO
+    drop(mercury);
     println!("reference count = {}", Rc::strong_count(&sun)); // 1 reference
 
     assert_eq!(Rc::strong_count(&sun), 1);
